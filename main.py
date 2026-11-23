@@ -217,7 +217,8 @@ def color_of(story):
 
 
 def source_line(story):
-    return f"{story['tag']}  /  {story['source']}"
+    attribution = story["attribution"]
+    return f"{attribution['certainty']}  /  {attribution['outlet']}"
 
 
 def story_label(plate, story, x, y, width):
@@ -235,8 +236,9 @@ def draw_header(plate, edition):
     plate.text(edition["date"], PAGE_SIZE / 2, 100, face="display55", size=1.32, align=.5, wear=True)
 
     by_region = Counter(article["region"] for article in edition["stories"])
-    region_span = BODY_WIDTH / len(REGION_INK)
-    for index, region in enumerate(REGION_INK):
+    regions = edition["regions"]
+    region_span = BODY_WIDTH / len(regions)
+    for index, region in enumerate(regions):
         block_left = LEFT + index * region_span
         plate.box(block_left, 112, region_span, 20, REGION_INK[region])
         plate.text(f"{region.upper()}   {by_region[region]}", block_left + region_span / 2, 126,
@@ -267,19 +269,20 @@ def draw_top_stories(plate, primary, secondary):
         plate.text(line, LEFT, 226 + 48 * index, face="display55", size=1.03, width=lead_width - 2)
     paint_scene(plate, primary, (LEFT, 283, lead_width, 121))
     plate.text("ILLUSTRATION  /  BENGHAZI HARBOR", lead_right - 6, 398, size=.74, align=1, color="white")
-    plate.paragraph(primary["detail"], LEFT, 425, lead_width, face="news14", size=1.2,
+    plate.paragraph(primary["copy"]["summary"], LEFT, 425, lead_width, face="news14", size=1.2,
                     leading=18, rows=2, color="ink")
     plate.box(649, 171, .8, 276, "rule")
 
     column_left = 662
     column_width = RIGHT - column_left
     for top, story in zip((171, 310), secondary, strict=True):
+        copy = story["copy"]
         story_label(plate, story, column_left, top, column_width)
         plate.text(source_line(story), column_left + column_width, top + 10, size=.81, align=1,
                    color=color_of(story))
         paint_scene(plate, story, (column_left, top + 17, column_width, 60))
-        plate.text(story["title"], column_left, top + 99, face="display22", size=1, width=column_width)
-        plate.paragraph(story["detail"], column_left, top + 116, column_width, face="news14",
+        plate.text(copy["headline"], column_left, top + 99, face="display22", size=1, width=column_width)
+        plate.paragraph(copy["summary"], column_left, top + 116, column_width, face="news14",
                         size=.97, leading=13, rows=2)
         plate.rule(column_left, top + 134, column_width)
 
@@ -294,12 +297,13 @@ def draw_dispatch_grid(plate, stories):
         row, column = divmod(index, 4)
         x = LEFT + column * (column_width + gutter)
         y = 479 + row * 77
+        copy = story["copy"]
         story_label(plate, story, x, y, column_width)
         plate.rule(x, y + 13.5, column_width)
         paint_scene(plate, story, (x + column_width - 67, y + 17, 67, 46))
-        plate.paragraph(story["title"], x, y + 27, copy_width, face="news14",
+        plate.paragraph(copy["headline"], x, y + 27, copy_width, face="news14",
                         size=1.04, leading=13, color="ink")
-        plate.paragraph(story["detail"], x, y + 49.5, copy_width, size=.83, leading=8.2, rows=3)
+        plate.paragraph(copy["summary"], x, y + 49.5, copy_width, size=.83, leading=8.2, rows=3)
         plate.text(source_line(story), x + column_width, y + 75, size=.75, align=1,
                    color=color_of(story), width=column_width)
 
@@ -314,7 +318,7 @@ def draw_briefs(plate, stories):
         label = f"{story['id']:02}  {story['place']}  /  {source_line(story)}"
         plate.box(x, y + 1, 3, 17, ink)
         plate.text(label, x + 7, y + 8, size=.73, color=ink, width=295)
-        plate.text(story["title"], x + 7, y + 18.3, size=.94, width=295)
+        plate.text(story["copy"]["headline"], x + 7, y + 18.3, size=.94, width=295)
         plate.rule(x, y + 20.2, 304, thickness=.55)
 
 

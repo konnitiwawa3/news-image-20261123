@@ -52,6 +52,9 @@ class Scene:
             end = min(99, x + texture.uniform(.6, length))
             self.line(ink, (x, y), (end, y - .3), weight=.46)
 
+    def horizontal(self, ink, x, y, length, *, weight):
+        self.line(ink, (x, y), (x + length, y), weight=weight)
+
 
 # Ordered strokes and fills from the original editorial artwork.
 def benghazi(s):
@@ -143,8 +146,8 @@ def summit(s):
     s.flecks(12,"silver",46,59,54)
     s.block(43, 19, 46, 27, "shadow")
     s.block(47, 22, 38, 21, "mist")
-    for x, y, w in ((51,28,28),(51,32,26),(51,36,18)):
-        s.line("sea", (x,y), (x+w,y), weight=1)
+    for y, length in ((28, 28), (32, 26), (36, 18)):
+        s.horizontal("sea", 51, y, length, weight=1)
     s.poly("rust", (45,44), (49,40), (59,46), (56,49))
     s.poly("salmon", (77,43), (81,40), (91,44), (88,48))
 
@@ -157,7 +160,7 @@ def refinery(s):
     for x, y, w in ((8,29,15),(25,35,21),(70,31,19)):
         s.block(x,y,w,19,"steel")
         s.oval(x,y-3,w,6,"mist")
-        s.line("slate",(x+2,y+11),(x+w-2,y+11),weight=.8)
+        s.horizontal("slate", x + 2, y + 11, w - 4, weight=.8)
     for x, y in ((16,13),(39,20),(78,12),(91,18)):
         s.block(x, y, 3, 39-y, "shadow")
         s.block(x, y+3, 3, 2, "salmon")
@@ -179,7 +182,7 @@ def castle(s):
     s.poly("rust",(17,31),(36,23),(63,23),(82,31))
     s.poly("shadow",(25,22),(35,15),(42,12),(58,12),(67,16),(75,22))
     s.poly("salmon",(30,21),(42,13),(58,13),(69,21))
-    s.line("cream",(24,51),(76,51),weight=1.3)
+    s.horizontal("cream", 24, 51, 52, weight=1.3)
 
 
 def quake(s):
@@ -204,7 +207,7 @@ def runway(s):
     s.block(79,13,4,14,"slate")
     s.poly("slate",(76,11),(86,11),(85,15),(77,15))
     s.oval(68,29,13,16,"brick")
-    s.line("cream",(71,37),(78,37),weight=1.8)
+    s.horizontal("cream", 71, 37, 7, weight=1.8)
 
 
 def cargo(s):
@@ -246,7 +249,7 @@ def cabinet(s):
         s.poly("slate",(x-11,48),(x-7,38),(x,36),(x+8,38),(x+12,48))
         s.line("shadow",(x+2,45),(x+6,40),(x+7,36),weight=.75)
     s.poly("pine",(11,45),(89,45),(97,58),(3,58))
-    s.line("moss",(9,52),(91,52),weight=.72)
+    s.horizontal("moss", 9, 52, 82, weight=.72)
 
 
 def river(s):
