@@ -1,44 +1,59 @@
-"""Original spot illustrations on an engraved, two-ink-inspired print plate."""
+"""Spot illustrations drawn in local coordinates on the newspaper's plate."""
 
 from random import Random
 
 
 class Scene:
-    """Draw against a 100-by-60 local grid on the shared raster plate."""
+    """Map a common illustration grid into the size of a story's art slot."""
 
-    def __init__(self, press, x, y, w, h):
-        self.press = press
-        self.x, self.y, self.w, self.h = x, y, w, h
+    GRID_WIDTH = 100
+    GRID_HEIGHT = 60
 
-    def xy(self, point):
+    def __init__(self, plate, x, y, width, height):
+        self.plate = plate
+        self.left, self.top = x, y
+        self.width, self.height = width, height
+
+    def point(self, point):
         x, y = point
-        return self.x + x * self.w / 100, self.y + y * self.h / 60
+        return (
+            self.left + x * self.width / self.GRID_WIDTH,
+            self.top + y * self.height / self.GRID_HEIGHT,
+        )
+
+    def rectangle(self, x, y, width, height):
+        return (
+            *self.point((x, y)),
+            width * self.width / self.GRID_WIDTH,
+            height * self.height / self.GRID_HEIGHT,
+        )
 
     def block(self, x, y, w, h, ink):
-        left, top = self.xy((x, y))
-        self.press.box(left, top, w * self.w / 100, h * self.h / 60, ink)
+        self.plate.box(*self.rectangle(x, y, w, h), ink)
 
     def poly(self, ink, *points):
-        self.press.polygon([self.xy(point) for point in points], ink)
+        self.plate.polygon([self.point(point) for point in points], ink)
 
     def line(self, ink, *points, weight=1):
-        self.press.line([self.xy(point) for point in points], ink, weight)
+        self.plate.line([self.point(point) for point in points], ink, weight)
 
     def oval(self, x, y, w, h, ink):
-        left, top = self.xy((x, y))
-        self.press.oval(left, top, w * self.w / 100, h * self.h / 60, ink)
+        self.plate.oval(*self.rectangle(x, y, w, h), ink)
 
     def horizon(self, top, bottom, level=34):
-        self.block(0, 0, 100, 60, top)
-        self.block(0, level, 100, 60 - level, bottom)
+        self.block(0, 0, self.GRID_WIDTH, self.GRID_HEIGHT, top)
+        self.block(0, level, self.GRID_WIDTH, self.GRID_HEIGHT - level, bottom)
 
     def flecks(self, seed, ink, lower=3, upper=57, count=78, length=3):
-        rng = Random(seed)
+        texture = Random(seed)
         for _ in range(count):
-            x, y = rng.uniform(1, 97), rng.uniform(lower, upper)
-            self.line(ink, (x, y), (min(99, x + rng.uniform(.6, length)), y - .3), weight=.46)
+            x = texture.uniform(1, 97)
+            y = texture.uniform(lower, upper)
+            end = min(99, x + texture.uniform(.6, length))
+            self.line(ink, (x, y), (end, y - .3), weight=.46)
 
 
+# Ordered strokes and fills from the original editorial artwork.
 def benghazi(s):
     s.horizon("haze", "sea", 30)
     s.oval(78, 4, 12, 15, "sun")
@@ -274,7 +289,21 @@ def peso(s):
     s.line("rust",(74,29),(74,45),weight=.9)
 
 
-SCENES = {render.__name__: render for render in (
-    benghazi, tanker, chips, rubble, summit, refinery, castle, quake, runway,
-    cargo, port, cabinet, river, cameras, peso,
-)}
+# Keep the manifest keys explicit so the drawing functions can be renamed independently.
+SCENES = {
+    "benghazi": benghazi,
+    "tanker": tanker,
+    "chips": chips,
+    "rubble": rubble,
+    "summit": summit,
+    "refinery": refinery,
+    "castle": castle,
+    "quake": quake,
+    "runway": runway,
+    "cargo": cargo,
+    "port": port,
+    "cabinet": cabinet,
+    "river": river,
+    "cameras": cameras,
+    "peso": peso,
+}

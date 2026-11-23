@@ -1,7 +1,17 @@
 {
   "date": "23 NOVEMBER 2026",
   "cutoff": "11:40 UTC",
-  "regions": ["Europe", "Middle East", "Africa", "Asia", "Oceania", "N. America", "Latin America"],
+  "regions": [
+    "Europe",
+    "Middle East",
+    "Africa",
+    "Asia",
+    "Oceania",
+    "N. America",
+    "Latin America"
+  ],
+  "market_source": "AP | 23 NOV | SESSION SNAPSHOTS",
+  "market_link": "https://apnews.com/article/49ba1beba78fa4ed2bd5898029f79c91",
   "stories": [
     {"id": 1, "region": "Africa", "place": "LIBYA / UKRAINE",
      "title": "Ukraine confirms strike on Russian warship in Libya", "detail": "Kyiv said its attack sank the corvette. Libyan officials confirmed severe damage in Benghazi on 22 Nov.",
@@ -138,25 +148,23 @@
      "tag": "REPORTED", "source": "Reuters", "link": "https://uk.marketscreener.com/news/macron-proposes-reviving-plan-to-enshrine-fiscal-rules-in-french-constitution-ce7851dad98ff522"}
   ],
   "timeline": [
-    ["02:40", "QUAKE 08", "event"],
-    ["03:00", "SHURI 07", "event"],
-    ["06:18", "COP REACTION 05", "report"],
-    ["07:48", "LIBYA 01", "report"],
-    ["07:59", "IRAN 02", "report"],
-    ["09:00", "PMI 16", "release"]
+    {"time_utc": "02:40", "label": "QUAKE 08", "kind": "event"},
+    {"time_utc": "03:00", "label": "SHURI 07", "kind": "event"},
+    {"time_utc": "06:18", "label": "COP REACTION 05", "kind": "report"},
+    {"time_utc": "07:48", "label": "LIBYA 01", "kind": "report"},
+    {"time_utc": "07:59", "label": "IRAN 02", "kind": "report"},
+    {"time_utc": "09:00", "label": "PMI 16", "kind": "release"}
   ],
   "date_check": [
-    ["Benghazi", "Strike 22 Nov; Kyiv confirms role on 23 Nov."],
-    ["COP31", "Closed 22 Nov; Pacific reaction reported on 23 Nov."],
-    ["Prior day", "U.S. House tally and WHO Congo appeal: 22 Nov."],
-    ["Excluded", "Kyiv-area attack and Amazon rescue: 22 Nov."]
+    {"subject": "Benghazi", "note": "Strike 22 Nov; Kyiv confirms role on 23 Nov."},
+    {"subject": "COP31", "note": "Closed 22 Nov; Pacific reaction reported on 23 Nov."},
+    {"subject": "Prior day", "note": "U.S. House tally and WHO Congo appeal: 22 Nov."},
+    {"subject": "Excluded", "note": "Kyiv-area attack and Amazon rescue: 22 Nov."}
   ],
   "markets": [
-    ["KOSPI", "4,708.54", "-3.3% · Seoul close"],
-    ["TAIEX", "+2.2%", "Taipei close"],
-    ["BRENT", "$92.02", "-0.6% · intraday"],
-    ["FTSE 100", "10,394.52", "+0.5% · early trade"]
-  ],
-  "market_source": "AP | 23 NOV | SESSION SNAPSHOTS",
-  "market_link": "https://apnews.com/article/49ba1beba78fa4ed2bd5898029f79c91"
+    {"index": "KOSPI", "value": "4,708.54", "session": "-3.3% · Seoul close"},
+    {"index": "TAIEX", "value": "+2.2%", "session": "Taipei close"},
+    {"index": "BRENT", "value": "$92.02", "session": "-0.6% · intraday"},
+    {"index": "FTSE 100", "value": "10,394.52", "session": "+0.5% · early trade"}
+  ]
 }

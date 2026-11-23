@@ -1,4 +1,4 @@
-"""Render the World Dispatch front page using only the Python standard library."""
+"""Compose the World Dispatch front page and export its deterministic print."""
 
 import json
 import os
@@ -12,20 +12,20 @@ from pathlib import Path
 from random import Random
 
 ASSET_DIR = Path(__file__).resolve().parent
-# The grader uses -P, which omits the script directory from sys.path.
+# Safe-path mode omits the script directory, which contains the scene module.
 sys.path.insert(0, str(ASSET_DIR))
 
 from illustrations import SCENES, Scene
 
+PAGE_SIZE = 1024
+SUPERSAMPLE = 3
+PLATE_WIDTH = PAGE_SIZE * SUPERSAMPLE
+LEFT = 26
+RIGHT = PAGE_SIZE - LEFT
+BODY_WIDTH = RIGHT - LEFT
+PAPER_RGB = (247, 239, 220)
 
-SIDE = 1024
-SCALE = 3
-PLATE_SIZE = SIDE * SCALE
-MARGIN = 26
-RIGHT = SIDE - MARGIN
-SPAN = RIGHT - MARGIN
-PAPER = (247, 239, 220)
-REGIONS = {
+REGION_INK = {
     "Europe": "europe",
     "Middle East": "middle_east",
     "Africa": "africa",
@@ -34,8 +34,8 @@ REGIONS = {
     "N. America": "north_america",
     "Latin America": "latin_america",
 }
-# Stone Light neutral stop 15 and regional hues at stop 30.
-COLORS = {
+# Astryx Stone Light neutral 15 and region colors at stop 30.
+PRINT_COLORS = {
     "ink": "25252a", "muted": "46464e", "europe": "344861",
     "middle_east": "603c37", "africa": "5e3f27", "asia": "2c4f44",
     "oceania": "264d57", "north_america": "4c405b", "latin_america": "524818",
@@ -47,56 +47,66 @@ COLORS = {
     "moss": "819481", "sun": "e0b96e", "rust": "ab6147", "brick": "75473f",
     "salmon": "ce8d70", "ink_light": "494038",
 }
-PALETTE = {name: index for index, name in enumerate(COLORS, 1)}
-INKS = [PAPER, *(tuple(bytes.fromhex(value)) for value in COLORS.values())]
-TRANSCRIPTIONS = str.maketrans({"·": "|", "−": "-", " ": " "})
+INK_INDEX = {name: number for number, name in enumerate(PRINT_COLORS, start=1)}
+RGB_BY_INK = (PAPER_RGB, *(tuple(bytes.fromhex(rgb)) for rgb in PRINT_COLORS.values()))
+GLYPH_SUBSTITUTIONS = str.maketrans({"·": "|", "−": "-", "\u00a0": " "})
 
 
-class Press:
+class PrintPlate:
     def __init__(self):
-        self.plate = bytearray(PLATE_SIZE ** 2)
-        self.fonts = json.loads(zlib.decompress((ASSET_DIR / "materials/glyphs.json.z").read_bytes()))
+        self.pixels = bytearray(PLATE_WIDTH * PLATE_WIDTH)
+        font_bytes = (ASSET_DIR / "materials" / "glyphs.json.z").read_bytes()
+        self.fonts = json.loads(zlib.decompress(font_bytes))
 
-    def row(self, y, x0, x1, color):
-        if 0 <= y < PLATE_SIZE:
-            left, right = max(0, x0), min(PLATE_SIZE, x1)
-            if right > left:
-                start = y * PLATE_SIZE + left
-                self.plate[start:start + right - left] = bytes((color,)) * (right - left)
+    def paint_span(self, row, start, stop, ink):
+        start = max(0, start)
+        stop = min(PLATE_WIDTH, stop)
+        if start >= stop or row < 0 or row >= PLATE_WIDTH:
+            return
+        offset = row * PLATE_WIDTH
+        self.pixels[offset + start:offset + stop] = bytes([ink]) * (stop - start)
 
     def box(self, x, y, w, h, color):
-        left, top, right, bottom = (round(item * SCALE) for item in (x, y, x + w, y + h))
-        for row in range(max(0, top), min(PLATE_SIZE, bottom)):
-            self.row(row, left, right, PALETTE[color])
+        left = round(x * SUPERSAMPLE)
+        top = round(y * SUPERSAMPLE)
+        right = round((x + w) * SUPERSAMPLE)
+        bottom = round((y + h) * SUPERSAMPLE)
+        ink = INK_INDEX[color]
+        for row in range(max(top, 0), min(bottom, PLATE_WIDTH)):
+            self.paint_span(row, left, right, ink)
 
     def line(self, points, color, weight=1):
-        for (x0, y0), (x1, y1) in zip(points, points[1:]):
-            steps = max(1, round(SCALE * max(abs(x1 - x0), abs(y1 - y0))))
-            for step in range(steps + 1):
-                fraction = step / steps
-                x = x0 + (x1 - x0) * fraction
-                y = y0 + (y1 - y0) * fraction
-                self.box(x - weight / 2, y - weight / 2, weight, weight, color)
+        for start, end in zip(points, points[1:]):
+            x, y = start
+            dx, dy = end[0] - x, end[1] - y
+            samples = max(1, round(SUPERSAMPLE * max(abs(dx), abs(dy))))
+            for index in range(samples + 1):
+                t = index / samples
+                self.box(x + dx * t - weight / 2, y + dy * t - weight / 2, weight, weight, color)
 
     def polygon(self, points, color):
-        vertices = [(x * SCALE, y * SCALE) for x, y in points]
-        edges = list(zip(vertices, vertices[1:] + vertices[:1]))
-        low = max(0, int(min(y for _, y in vertices)))
-        high = min(PLATE_SIZE, round(max(y for _, y in vertices)))
-        for row in range(low, high):
-            sample = row + .5
-            crossings = sorted(
-                x0 + (x1 - x0) * (sample - y0) / (y1 - y0)
-                for (x0, y0), (x1, y1) in edges
-                if min(y0, y1) <= sample < max(y0, y1)
-            )
-            for left, right in zip(crossings[::2], crossings[1::2], strict=True):
-                self.row(row, round(left), round(right), PALETTE[color])
+        vertices = [(x * SUPERSAMPLE, y * SUPERSAMPLE) for x, y in points]
+        sides = list(zip(vertices, vertices[1:] + vertices[:1]))
+        top = max(0, int(min(y for _, y in vertices)))
+        bottom = min(PLATE_WIDTH, round(max(y for _, y in vertices)))
+        ink = INK_INDEX[color]
+        for row in range(top, bottom):
+            sample_y = row + .5
+            intersections = []
+            for (ax, ay), (bx, by) in sides:
+                if min(ay, by) <= sample_y < max(ay, by):
+                    ix = ax + (bx - ax) * (sample_y - ay) / (by - ay)
+                    intersections.append(ix)
+            intersections.sort()
+            for left, right in zip(intersections[::2], intersections[1::2], strict=True):
+                self.paint_span(row, round(left), round(right), ink)
 
     def oval(self, x, y, w, h, color):
-        points = [(x + w / 2 * (1 + cos(n * tau / 32)),
-                   y + h / 2 * (1 + sin(n * tau / 32))) for n in range(32)]
-        self.polygon(points, color)
+        outline = []
+        for n in range(32):
+            angle = n * tau / 32
+            outline.append((x + w / 2 * (1 + cos(angle)), y + h / 2 * (1 + sin(angle))))
+        self.polygon(outline, color)
 
     def rule(self, x, y, width, color="hairline", thickness=.8):
         self.box(x, y, width, thickness, color)
@@ -108,61 +118,66 @@ class Press:
         self.box(x + w - .8, y, .8, h, color)
 
     @lru_cache(maxsize=3600)
-    def glyph(self, face, char, scale):
+    def glyph_pixels(self, face, char, zoom):
         _, dx, dy, width, height, mask = self.fonts[face][char]
         bits = bytes.fromhex(mask)
-        stride = (width + 7) // 8
+        row_bytes = (width + 7) // 8
+        origin_x = round(dx * zoom)
+        origin_y = round(dy * zoom)
         points = []
-        for y in range(round(height * scale)):
-            source_y = min(height - 1, int(y / scale))
-            for x in range(round(width * scale)):
-                source_x = min(width - 1, int(x / scale))
-                if bits[source_y * stride + source_x // 8] & (128 >> (source_x % 8)):
-                    points.append((round(dx * scale) + x, round(dy * scale) + y))
+        for y in range(round(height * zoom)):
+            source_y = min(height - 1, int(y / zoom))
+            for x in range(round(width * zoom)):
+                source_x = min(width - 1, int(x / zoom))
+                mask_byte = bits[source_y * row_bytes + source_x // 8]
+                if mask_byte & (128 >> (source_x % 8)):
+                    points.append((origin_x + x, origin_y + y))
         return points
 
-    def width(self, value, face, scale):
-        return sum(round(self.fonts[face][c][0] * scale) for c in value.translate(TRANSCRIPTIONS)) / SCALE
+    def width(self, text, face, zoom):
+        advances = self.fonts[face]
+        text = text.translate(GLYPH_SUBSTITUTIONS)
+        return sum(round(advances[letter][0] * zoom) for letter in text) / SUPERSAMPLE
 
     def text(self, value, x, y, *, face="news12", size=1, color="ink", align=0, wear=False, width=None):
-        value = value.translate(TRANSCRIPTIONS)
+        value = value.translate(GLYPH_SUBSTITUTIONS)
         if width is not None:
             while self.width(value, face, size) > width:
                 size -= .01
                 if size < .5:
                     raise ValueError(f"Text exceeds its box: {value}")
-        cursor = round((x - align * self.width(value, face, size)) * SCALE)
-        baseline = round(y * SCALE)
-        ink = PALETTE[color]
-        for index, char in enumerate(value):
+        cursor = round((x - align * self.width(value, face, size)) * SUPERSAMPLE)
+        baseline = round(y * SUPERSAMPLE)
+        ink = INK_INDEX[color]
+        for index, letter in enumerate(value):
             tone = (index * 101 + cursor * 541 + baseline) % 19
-            dye = PALETTE["ink_light"] if wear and tone < 4 else ink
-            for dx, dy in self.glyph(face, char, size):
-                xx, yy = cursor + dx, baseline + dy
-                position = yy * PLATE_SIZE + xx
-                if not (0 <= xx < PLATE_SIZE and 0 <= yy < PLATE_SIZE):
+            visible_ink = INK_INDEX["ink_light"] if wear and tone < 4 else ink
+            for dx, dy in self.glyph_pixels(face, letter, size):
+                px = cursor + dx
+                py = baseline + dy
+                if not (0 <= px < PLATE_WIDTH and 0 <= py < PLATE_WIDTH):
                     continue
-                speckle = (xx * 83 ^ yy * 173 ^ tone * 13) % 521
-                if wear and speckle < 5:
+                grain = (px * 83 ^ py * 173 ^ tone * 13) % 521
+                if wear and grain < 5:
                     continue
-                self.plate[position] = dye
-                if wear and speckle > 516 and xx + 1 < PLATE_SIZE and self.plate[position + 1] == 0:
-                    self.plate[position + 1] = PALETTE["rule"]
-            cursor += round(self.fonts[face][char][0] * size)
+                offset = py * PLATE_WIDTH + px
+                self.pixels[offset] = visible_ink
+                if wear and grain > 516 and px + 1 < PLATE_WIDTH and not self.pixels[offset + 1]:
+                    self.pixels[offset + 1] = INK_INDEX["rule"]
+            cursor += round(self.fonts[face][letter][0] * size)
 
     def wrap(self, value, width, face, size):
+        first, *rest = value.split()
+        current_line = first
         lines = []
-        words = value.split()
-        current = words[0]
-        for word in words[1:]:
-            combined = f"{current} {word}"
-            if self.width(combined, face, size) <= width:
-                current = combined
+        for word in rest:
+            next_line = f"{current_line} {word}"
+            if self.width(next_line, face, size) <= width:
+                current_line = next_line
             else:
-                lines.append(current)
-                current = word
-        lines.append(current)
-        return lines
+                lines.append(current_line)
+                current_line = word
+        return [*lines, current_line]
 
     def paragraph(self, value, x, y, width, *, face="news12", size=1, leading=14, rows=2, color="muted"):
         lines = self.wrap(value, width, face, size)
@@ -171,11 +186,11 @@ class Press:
             lines = self.wrap(value, width, face, size)
         if len(lines) > rows:
             raise ValueError(f"Paragraph exceeds {rows} lines: {value}")
-        for i, line in enumerate(lines):
-            self.text(line, x, y + i * leading, face=face, size=size, color=color, width=width)
+        for number, line in enumerate(lines):
+            self.text(line, x, y + number * leading, face=face, size=size, color=color, width=width)
 
 
-# Simplified world coastline for the small equirectangular locator.
+# Simplified coastline for the equirectangular story locator.
 LAND = (
     ((-168,66),(-153,70),(-127,72),(-109,72),(-88,74),(-61,60),(-52,52),(-65,45),
      (-77,39),(-81,29),(-90,29),(-83,18),(-77,8),(-89,14),(-97,20),(-110,23),(-118,32),
@@ -198,212 +213,255 @@ LAND = (
 
 
 def color_of(story):
-    return REGIONS[story["region"]]
+    return REGION_INK[story["region"]]
 
 
-def story_label(p, story, x, y, width):
-    color = color_of(story)
-    p.box(x, y, 20, 13, color)
-    p.text(f"{story['id']:02}", x + 10, y + 10.3, size=.86, color="white", align=.5)
-    p.text(story["place"], x + 25, y + 10, size=.86, color=color, width=width - 27)
-
-
-def credit(story):
+def source_line(story):
     return f"{story['tag']}  /  {story['source']}"
 
 
-def masthead(p, edition):
-    p.rule(MARGIN, 22, SPAN, "ink", 1.8)
-    p.text("THE WORLD DISPATCH", MARGIN, 40, face="display22", size=.89, color="red")
-    p.text(f"MONDAY EDITION  /  THROUGH {edition['cutoff']}", RIGHT, 39, size=1.12, align=1)
-    p.text(edition["date"], 512, 100, face="display55", size=1.32, align=.5, wear=True)
-
-    counts = Counter(story["region"] for story in edition["stories"])
-    step = SPAN / len(REGIONS)
-    for i, (region, color) in enumerate(REGIONS.items()):
-        x = MARGIN + i * step
-        p.box(x, 112, step, 20, color)
-        label = f"{region.upper()}   {counts[region]}"
-        p.text(label, x + step / 2, 126, size=.97, align=.5, color="white")
-
-    p.rule(MARGIN, 139.5, SPAN)
-    p.rule(MARGIN, 162, SPAN)
-    p.text("UTC", MARGIN, 154, size=1.15, color="red")
-    step = (SPAN - 47) / len(edition["timeline"])
-    for i, (time, title, kind) in enumerate(edition["timeline"]):
-        x = MARGIN + 47 + i * step
-        p.box(x - 6, 144, .65, 14, "rule")
-        p.text(time, x, 153, size=.92, color="red")
-        p.text(title, x + 38, 150, size=.87, width=step - 45)
-        p.text(kind.upper(), x + 38, 158.5, size=.69, color="muted")
+def story_label(plate, story, x, y, width):
+    ink = color_of(story)
+    plate.box(x, y, 20, 13, ink)
+    plate.text(f"{story['id']:02}", x + 10, y + 10.3, size=.86, color="white", align=.5)
+    plate.text(story["place"], x + 25, y + 10, size=.86, color=ink, width=width - 27)
 
 
-def leading(p, lead, secondary):
-    x, y, w = MARGIN, 171, 612
-    story_label(p, lead, x, y, w)
-    p.text(credit(lead), x + w, y + 10, size=.88, align=1, color=color_of(lead))
-    for i, line in enumerate(lead["lines"]):
-        p.text(line, x, 226 + 48 * i, face="display55", size=1.03, width=w - 2)
-    SCENES[lead["scene"]](Scene(p, x, 283, w, 121))
-    p.text("ILLUSTRATION  /  BENGHAZI HARBOR", x + w - 6, 398, size=.74, align=1, color="white")
-    p.paragraph(lead["detail"], x, 425, w, face="news14", size=1.2, leading=18, rows=2, color="ink")
-    p.box(649, y, .8, 276, "rule")
-    for s, top in zip(secondary, (171, 310), strict=True):
-        x, w = 662, RIGHT - 662
-        story_label(p, s, x, top, w)
-        p.text(credit(s), x + w, top + 10, size=.81, align=1, color=color_of(s))
-        SCENES[s["scene"]](Scene(p, x, top + 17, w, 60))
-        p.text(s["title"], x, top + 99, face="display22", size=1.00, width=w)
-        p.paragraph(s["detail"], x, top + 116, w, face="news14", size=.97, leading=13, rows=2)
-        p.rule(x, top + 134, w)
+def draw_header(plate, edition):
+    plate.rule(LEFT, 22, BODY_WIDTH, "ink", 1.8)
+    plate.text("THE WORLD DISPATCH", LEFT, 40, face="display22", size=.89, color="red")
+    line = f"MONDAY EDITION  /  THROUGH {edition['cutoff']}"
+    plate.text(line, RIGHT, 39, size=1.12, align=1)
+    plate.text(edition["date"], PAGE_SIZE / 2, 100, face="display55", size=1.32, align=.5, wear=True)
+
+    by_region = Counter(article["region"] for article in edition["stories"])
+    region_span = BODY_WIDTH / len(REGION_INK)
+    for index, region in enumerate(REGION_INK):
+        block_left = LEFT + index * region_span
+        plate.box(block_left, 112, region_span, 20, REGION_INK[region])
+        plate.text(f"{region.upper()}   {by_region[region]}", block_left + region_span / 2, 126,
+                   size=.97, align=.5, color="white")
+
+    for y in (139.5, 162):
+        plate.rule(LEFT, y, BODY_WIDTH)
+    plate.text("UTC", LEFT, 154, size=1.15, color="red")
+    time_span = (BODY_WIDTH - 47) / len(edition["timeline"])
+    for index, event in enumerate(edition["timeline"]):
+        column = LEFT + 47 + index * time_span
+        plate.box(column - 6, 144, .65, 14, "rule")
+        plate.text(event["time_utc"], column, 153, size=.92, color="red")
+        plate.text(event["label"], column + 38, 150, size=.87, width=time_span - 45)
+        plate.text(event["kind"].upper(), column + 38, 158.5, size=.69, color="muted")
 
 
-def dispatches(p, stories):
-    p.rule(MARGIN, 453, SPAN, "ink", 1.05)
-    p.text("AROUND THE WORLD", MARGIN, 470, size=1.04, color="red")
+def paint_scene(plate, story, frame):
+    SCENES[story["scene"]](Scene(plate, *frame))
+
+
+def draw_top_stories(plate, primary, secondary):
+    lead_width = 612
+    lead_right = LEFT + lead_width
+    story_label(plate, primary, LEFT, 171, lead_width)
+    plate.text(source_line(primary), lead_right, 181, size=.88, align=1, color=color_of(primary))
+    for index, line in enumerate(primary["lines"]):
+        plate.text(line, LEFT, 226 + 48 * index, face="display55", size=1.03, width=lead_width - 2)
+    paint_scene(plate, primary, (LEFT, 283, lead_width, 121))
+    plate.text("ILLUSTRATION  /  BENGHAZI HARBOR", lead_right - 6, 398, size=.74, align=1, color="white")
+    plate.paragraph(primary["detail"], LEFT, 425, lead_width, face="news14", size=1.2,
+                    leading=18, rows=2, color="ink")
+    plate.box(649, 171, .8, 276, "rule")
+
+    column_left = 662
+    column_width = RIGHT - column_left
+    for top, story in zip((171, 310), secondary, strict=True):
+        story_label(plate, story, column_left, top, column_width)
+        plate.text(source_line(story), column_left + column_width, top + 10, size=.81, align=1,
+                   color=color_of(story))
+        paint_scene(plate, story, (column_left, top + 17, column_width, 60))
+        plate.text(story["title"], column_left, top + 99, face="display22", size=1, width=column_width)
+        plate.paragraph(story["detail"], column_left, top + 116, column_width, face="news14",
+                        size=.97, leading=13, rows=2)
+        plate.rule(column_left, top + 134, column_width)
+
+
+def draw_dispatch_grid(plate, stories):
+    plate.rule(LEFT, 453, BODY_WIDTH, "ink", 1.05)
+    plate.text("AROUND THE WORLD", LEFT, 470, size=1.04, color="red")
     gutter = 12
-    w = (SPAN - 3 * gutter) / 4
-    for i, story in enumerate(stories):
-        x = MARGIN + (i % 4) * (w + gutter)
-        y = 479 + i // 4 * 77
-        story_label(p, story, x, y, w)
-        p.rule(x, y + 13.5, w)
-        SCENES[story["scene"]](Scene(p, x + w - 67, y + 17, 67, 46))
-        p.paragraph(story["title"], x, y + 27, w - 73, face="news14",
-                    size=1.04, leading=13, color="ink")
-        p.paragraph(story["detail"], x, y + 49.5, w - 73, size=.83, leading=8.2, rows=3)
-        p.text(credit(story), x + w, y + 75, size=.75, align=1, color=color_of(story), width=w)
+    column_width = (BODY_WIDTH - 3 * gutter) / 4
+    copy_width = column_width - 73
+    for index, story in enumerate(stories):
+        row, column = divmod(index, 4)
+        x = LEFT + column * (column_width + gutter)
+        y = 479 + row * 77
+        story_label(plate, story, x, y, column_width)
+        plate.rule(x, y + 13.5, column_width)
+        paint_scene(plate, story, (x + column_width - 67, y + 17, 67, 46))
+        plate.paragraph(story["title"], x, y + 27, copy_width, face="news14",
+                        size=1.04, leading=13, color="ink")
+        plate.paragraph(story["detail"], x, y + 49.5, copy_width, size=.83, leading=8.2, rows=3)
+        plate.text(source_line(story), x + column_width, y + 75, size=.75, align=1,
+                   color=color_of(story), width=column_width)
 
 
-def briefs(p, stories):
-    p.text("IN BRIEF", MARGIN, 730, size=1.02, color="red")
-    for i, story in enumerate(stories):
-        x = MARGIN + i // 11 * 315
-        y = 738 + i % 11 * 21
-        color = color_of(story)
-        p.box(x, y + 1, 3, 17, color)
-        p.text(f"{story['id']:02}  {story['place']}  /  {credit(story)}", x + 7, y + 8,
-               size=.73, color=color, width=295)
-        p.text(story["title"], x + 7, y + 18.3, size=.94, width=295)
-        p.rule(x, y + 20.2, 304, thickness=.55)
+def draw_briefs(plate, stories):
+    plate.text("IN BRIEF", LEFT, 730, size=1.02, color="red")
+    for index, story in enumerate(stories):
+        column, row = divmod(index, 11)
+        x = LEFT + column * 315
+        y = 738 + row * 21
+        ink = color_of(story)
+        label = f"{story['id']:02}  {story['place']}  /  {source_line(story)}"
+        plate.box(x, y + 1, 3, 17, ink)
+        plate.text(label, x + 7, y + 8, size=.73, color=ink, width=295)
+        plate.text(story["title"], x + 7, y + 18.3, size=.94, width=295)
+        plate.rule(x, y + 20.2, 304, thickness=.55)
 
 
-def inside_polygon(x, y, vertices):
-    hits = 0
-    for (ax, ay), (bx, by) in zip(vertices, vertices[1:] + vertices[:1]):
-        if (ay <= y < by) or (by <= y < ay):
-            hits += x < ax + (bx - ax) * (y - ay) / (by - ay)
-    return hits % 2
+def point_on_land(lon, lat, outline):
+    land = False
+    for (ax, ay), (bx, by) in zip(outline, outline[1:] + outline[:1]):
+        if min(ay, by) <= lat < max(ay, by):
+            if lon < ax + (bx - ax) * (lat - ay) / (by - ay):
+                land = not land
+    return land
 
 
-def atlas(p, edition):
-    x, y, w, h = 662, 733, RIGHT - 662, 135
-    p.text("STORY LOCATOR", x, 730, size=1.03, color="red")
-    p.text("NUMBERS MATCH THE ARTICLES", RIGHT, 730, size=.75, align=1, color="muted")
-    p.box(x, y, w, h, "panel")
-    p.frame(x, y, w, h)
+def draw_locator(plate, stories):
+    x, y = 662, 733
+    width, height = RIGHT - x, 135
+    plate.text("STORY LOCATOR", x, 730, size=1.03, color="red")
+    plate.text("NUMBERS MATCH THE ARTICLES", RIGHT, 730, size=.75, align=1, color="muted")
+    plate.box(x, y, width, height, "panel")
+    plate.frame(x, y, width, height)
 
     def project(lon, lat):
-        return x + 9 + (lon + 180) * (w - 18) / 360, y + 12 + (85 - lat) * (h - 25) / 146
+        return (
+            x + 9 + (lon + 180) * (width - 18) / 360,
+            y + 12 + (85 - lat) * (height - 25) / 146,
+        )
 
     for lat in range(-57, 83, 4):
         for lon in range(-178, 180, 4):
-            if any(inside_polygon(lon, lat, land) for land in LAND):
+            if any(point_on_land(lon, lat, outline) for outline in LAND):
                 px, py = project(lon, lat)
-                p.oval(px - .95, py - .8, 1.9, 1.6, "map")
+                plate.oval(px - .95, py - .8, 1.9, 1.6, "map")
 
-    pins = []
-    for story in edition["stories"]:
-        if "pin" not in story:
+    positions = []
+    for story in stories:
+        pin = story.get("pin")
+        if pin is None:
             continue
-        lon, lat, dx, dy = story["pin"]
+        lon, lat, dx, dy = pin
         px, py = project(lon, lat)
-        cx, cy = px + dx, py + dy
-        color = color_of(story)
-        p.line(((px, py), (cx, cy)), color, .7)
-        p.oval(px - 1.4, py - 1.4, 2.8, 2.8, color)
-        pins.append((story["id"], cx, cy, color))
-    for number, cx, cy, color in pins:
-        p.oval(cx - 7.3, cy - 7.3, 14.6, 14.6, "white")
-        p.oval(cx - 6.5, cy - 6.5, 13, 13, color)
-        p.text(f"{number:02}", cx, cy + 2.65, size=.66, color="white", align=.5)
+        label_x, label_y = px + dx, py + dy
+        ink = color_of(story)
+        plate.line(((px, py), (label_x, label_y)), ink, .7)
+        plate.oval(px - 1.4, py - 1.4, 2.8, 2.8, ink)
+        positions.append((story["id"], label_x, label_y, ink))
 
-    y = 876
-    p.box(x, y, w, 91, "panel")
-    p.frame(x, y, w, 91, "rule")
-    p.text("DATE CHECK", x + 9, y + 16, size=1, color="red")
-    for i, (label, detail) in enumerate(edition["date_check"]):
-        baseline = y + 31 + 14 * i
-        p.text(label.upper(), x + 9, baseline, size=.79, color="red", width=84)
-        p.text(detail, x + 96, baseline, size=.80, width=w - 105)
+    # Place all number discs on top of the leader lines.
+    for number, cx, cy, ink in positions:
+        plate.oval(cx - 7.3, cy - 7.3, 14.6, 14.6, "white")
+        plate.oval(cx - 6.5, cy - 6.5, 13, 13, ink)
+        plate.text(f"{number:02}", cx, cy + 2.65, size=.66, color="white", align=.5)
 
 
-def markets(p, edition):
-    p.rule(MARGIN, 977, SPAN, "ink", 1.15)
-    p.text("MARKETS", MARGIN, 994, size=1.1, color="red")
-    p.text(edition["market_source"], MARGIN, 1007, size=.73, color="muted")
-    start = MARGIN + 194
-    step = (RIGHT - start) / len(edition["markets"])
-    for i, (name, value, detail) in enumerate(edition["markets"]):
-        x = start + i * step
-        p.box(x - 8, 982, .6, 25, "rule")
-        p.text(name, x, 994, size=.92, color="red")
-        p.text(value, x + 58, 995, face="display22", size=.77, width=step - 68)
-        p.text(detail, x, 1007, size=.81, color="muted")
-    p.rule(MARGIN, 1013, SPAN, "ink", 1.1)
+def draw_date_notes(plate, notes):
+    left, top = 662, 876
+    width = RIGHT - left
+    plate.box(left, top, width, 91, "panel")
+    plate.frame(left, top, width, 91)
+    plate.text("DATE CHECK", left + 9, top + 16, size=1, color="red")
+    for index, item in enumerate(notes):
+        baseline = top + 31 + 14 * index
+        plate.text(item["subject"].upper(), left + 9, baseline, size=.79, color="red", width=84)
+        plate.text(item["note"], left + 96, baseline, size=.80, width=width - 105)
 
 
-def render(edition):
-    p = Press()
-    stories = edition["stories"]
-    masthead(p, edition)
-    leading(p, stories[0], stories[1:3])
-    dispatches(p, stories[3:15])
-    p.rule(MARGIN, 715, SPAN, "ink", 1.05)
-    briefs(p, stories[15:])
-    atlas(p, edition)
-    markets(p, edition)
-    return p.plate
+def draw_market_strip(plate, edition):
+    plate.rule(LEFT, 977, BODY_WIDTH, "ink", 1.15)
+    plate.text("MARKETS", LEFT, 994, size=1.1, color="red")
+    plate.text(edition["market_source"], LEFT, 1007, size=.73, color="muted")
+    first = LEFT + 194
+    spacing = (RIGHT - first) / len(edition["markets"])
+    for index, quote in enumerate(edition["markets"]):
+        x = first + index * spacing
+        plate.box(x - 8, 982, .6, 25, "rule")
+        plate.text(quote["index"], x, 994, size=.92, color="red")
+        plate.text(quote["value"], x + 58, 995, face="display22", size=.77, width=spacing - 68)
+        plate.text(quote["session"], x, 1007, size=.81, color="muted")
+    plate.rule(LEFT, 1013, BODY_WIDTH, "ink", 1.1)
 
 
-def chunk(kind, data):
-    return struct.pack(">I", len(data)) + kind + data + struct.pack(">I", zlib.crc32(kind + data))
+def layout_page(edition):
+    plate = PrintPlate()
+    articles = edition["stories"]
+    draw_header(plate, edition)
+    draw_top_stories(plate, articles[0], articles[1:3])
+    draw_dispatch_grid(plate, articles[3:15])
+    plate.rule(LEFT, 715, BODY_WIDTH, "ink", 1.05)
+    draw_briefs(plate, articles[15:])
+    draw_locator(plate, articles)
+    draw_date_notes(plate, edition["date_check"])
+    draw_market_strip(plate, edition)
+    return plate.pixels
 
 
-def print_png(plate):
-    rng = Random(23112026)
-    jitter = rng.randbytes(SIDE ** 2)
+def sample(plate, high_x, high_y):
+    first = high_y * PLATE_WIDTH + high_x
+    second = first + PLATE_WIDTH
+    third = second + PLATE_WIDTH
+    samples = (
+        plate[first], plate[first + 1], plate[first + 2],
+        plate[second], plate[second + 1], plate[second + 2],
+        plate[third], plate[third + 1], plate[third + 2],
+    )
+    if samples.count(samples[0]) == len(samples):
+        return RGB_BY_INK[samples[0]], samples[0] == 0
+    channels = zip(*(RGB_BY_INK[ink] for ink in samples))
+    return tuple(sum(channel) // len(samples) for channel in channels), 0 in samples
+
+
+def filtered_rows(plate):
+    speckle = Random(23112026).randbytes(PAGE_SIZE ** 2)
     rows = bytearray()
-    for y in range(SIDE):
+    for y in range(PAGE_SIZE):
         previous = [0, 0, 0]
-        rows.append(1)
-        for x in range(SIDE):
-            p = y * SCALE * PLATE_SIZE + x * SCALE
-            a, b, c = p, p + PLATE_SIZE, p + PLATE_SIZE * 2
-            pixels = (plate[a], plate[a+1], plate[a+2], plate[b], plate[b+1], plate[b+2],
-                      plate[c], plate[c+1], plate[c+2])
-            if pixels.count(pixels[0]) == 9:
-                rgb = INKS[pixels[0]]
-            else:
-                inks = [INKS[i] for i in pixels]
-                rgb = tuple(sum(channel) // 9 for channel in zip(*inks))
-            grain = jitter[y * SIDE + x]
+        rows.append(1)  # PNG Sub filter, reset at the start of each row.
+        for x in range(PAGE_SIZE):
+            rgb, paper_visible = sample(plate, x * SUPERSAMPLE, y * SUPERSAMPLE)
+            grain = speckle[y * PAGE_SIZE + x]
             aging = int(1.6 * sin(x / 71 + y / 88) + 1.2 * cos(y / 131 - x / 175))
-            edge = -int(max(0, 30 - min(x, y, SIDE - x - 1, SIDE - y - 1)) / 11)
-            paper = 0 in pixels
-            noise = aging + edge + (grain % 4 - 1 if paper else grain % 3 - 1)
-            for channel, base in enumerate(rgb):
-                value = min(255, max(0, base + noise))
+            edge_distance = min(x, y, PAGE_SIZE - x - 1, PAGE_SIZE - y - 1)
+            edge = -int(max(0, 30 - edge_distance) / 11)
+            noise = aging + edge + (grain % (4 if paper_visible else 3) - 1)
+            for channel, ink in enumerate(rgb):
+                value = min(255, max(0, ink + noise))
                 rows.append((value - previous[channel]) & 255)
                 previous[channel] = value
-    header = struct.pack(">IIBBBBB", SIDE, SIDE, 8, 2, 0, 0, 0)
-    return (b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", header)
-            + chunk(b"IDAT", zlib.compress(rows, level=9)) + chunk(b"IEND", b""))
+    return rows
+
+
+def png_chunk(tag, payload):
+    contents = tag + payload
+    return struct.pack(">I", len(payload)) + contents + struct.pack(">I", zlib.crc32(contents))
+
+
+def encode_png(plate):
+    header = struct.pack(">IIBBBBB", PAGE_SIZE, PAGE_SIZE, 8, 2, 0, 0, 0)
+    raster = zlib.compress(filtered_rows(plate), level=9)
+    return b"".join((
+        b"\x89PNG\r\n\x1a\n",
+        png_chunk(b"IHDR", header),
+        png_chunk(b"IDAT", raster),
+        png_chunk(b"IEND", b""),
+    ))
 
 
 def main():
     edition = json.loads((ASSET_DIR / "edition.json").read_text(encoding="utf-8"))
-    png = print_png(render(edition))
+    png = encode_png(layout_page(edition))
     if len(png) > 1024 ** 2:
         raise ValueError(f"PNG exceeds 1 MiB: {len(png)}")
     output = Path(os.environ.get("MAKEFUN_OUTPUT_DIR", "/output"))
