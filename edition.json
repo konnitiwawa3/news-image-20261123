@@ -1,228 +1,285 @@
 {
   "date": "23 NOVEMBER 2026",
   "cutoff": "11:40 UTC",
-  "regions": [
-    "Europe", "Middle East", "Africa", "Asia", "Oceania", "N. America", "Latin America"
-  ],
-  "market_source": "AP | 23 NOV | SESSION SNAPSHOTS",
-  "market_link": "https://apnews.com/article/49ba1beba78fa4ed2bd5898029f79c91",
-  "stories": [
-    {
-      "id": 1, "region": "Africa", "place": "LIBYA / UKRAINE",
-      "copy": {"headline": "Ukraine confirms strike on Russian warship in Libya", "summary": "Kyiv said its attack sank the corvette. Libyan officials confirmed severe damage in Benghazi on 22 Nov."},
-      "attribution": {"certainty": "CONFIRMED", "outlet": "AP", "url": "https://apnews.com/article/c382f8eb06dca7d87e89bc6c18ba7d61"},
-      "scene": "benghazi", "pin": [20.07, 32.12, -13, 10],
+  "regions": ["Europe", "Middle East", "Africa", "Asia", "Oceania", "N. America", "Latin America"],
+  "stories": {
+    "lead": {
+      "id": 1,
+      "region": "Africa",
+      "place": "LIBYA / UKRAINE",
+      "scene": "benghazi",
+      "pin": [20.07, 32.12, -13, 10],
+      "art_caption": "ILLUSTRATION  /  BENGHAZI HARBOR",
       "lines": ["Ukraine confirms strike", "on Russian warship in Libya"],
+      "copy": {
+        "headline": "Ukraine confirms strike on Russian warship in Libya",
+        "summary": "Kyiv said its attack sank the corvette. Libyan officials confirmed severe damage in Benghazi on 22 Nov."
+      },
+      "attribution": {
+        "certainty": "CONFIRMED", "outlet": "AP",
+        "url": "https://apnews.com/article/c382f8eb06dca7d87e89bc6c18ba7d61"
+      },
       "date_note": "Strike 22 Nov. Ukrainian president confirmed responsibility 23 Nov; AP reported at 07:48 UTC. Kyiv's claim of sinking is attributed separately."
     },
-    {
-      "id": 2, "region": "Middle East", "place": "IRAN",
-      "copy": {"headline": "Iran vows to resist U.S. oil blockade", "summary": "Tehran says it will use all available means to counter the naval blockade."},
-      "attribution": {"certainty": "STATEMENT", "outlet": "Reuters", "url": "https://www.aol.com/articles/iran-says-available-tools-confront-075904000.html"},
-      "scene": "tanker", "pin": [51.4, 35.7, 6, 6],
-      "date_note": "Foreign ministry briefing on Monday. Reuters first dispatch at 07:59 UTC."
-    },
-    {
-      "id": 3, "region": "Asia", "place": "SOUTH KOREA / TAIWAN",
-      "copy": {"headline": "Asia's chip trade splits", "summary": "KOSPI falls 3.3% while Taiwan's Taiex gains 2.2% amid AI-stock turmoil."},
-      "attribution": {"certainty": "MARKET", "outlet": "AP", "url": "https://apnews.com/article/49ba1beba78fa4ed2bd5898029f79c91"},
-      "scene": "chips", "pin": [127, 37.6, -5, -9],
-      "date_note": "23 Nov market moves in AP's evolving Monday dispatch."
-    },
-    {
-      "id": 4, "region": "Middle East", "place": "GAZA",
-      "copy": {"headline": "Gaza contamination mapped", "summary": "Oxfam found contamination indicators across over 99% of Gaza."},
-      "attribution": {"certainty": "REPORT", "outlet": "Oxfam", "url": "https://www.oxfam.org/en/press-releases/more-than-99-per-cent-gaza-environmental-contamination-from-israel-military-assault"},
-      "scene": "rubble", "pin": [34.46, 31.5, 2, 19]
-    },
-    {
-      "id": 5, "region": "Oceania", "place": "PACIFIC",
-      "copy": {"headline": "Pacific reacts to COP failure", "summary": "Pacific voices and Australian critics respond after Sunday's talks ended without a broad deal."},
-      "attribution": {"certainty": "RESPONSE", "outlet": "Reuters", "url": "https://www.investing.com/news/economy-news/cop-flop-triggers-backlash-in-australia-pacific-nations-express-despair-5044423"},
-      "scene": "summit", "pin": [149.13, -35.28, -8, -10],
-      "date_note": "COP31 closed 22 Nov; Monday's Australian and Pacific reaction is the item."
-    },
-    {
-      "id": 6, "region": "Europe", "place": "RUSSIA",
-      "copy": {"headline": "Perm refinery hit", "summary": "Officials reported a refinery fire and one death in the Perm region."},
-      "attribution": {"certainty": "REPORTED", "outlet": "Moscow Times", "url": "https://www.themoscowtimes.com/2026/11/23/ukrainian-drones-kill-1-strike-oil-refinery-in-perm-region-a94347/pdf"},
-      "scene": "refinery", "pin": [56.25, 58.01, 7, -8]
-    },
-    {
-      "id": 7, "region": "Asia", "place": "JAPAN",
-      "copy": {"headline": "Shuri Castle reopens", "summary": "Okinawa's restored main hall opens to visitors seven years after the fire."},
-      "attribution": {"certainty": "CONFIRMED", "outlet": "QAB", "url": "https://www.qab.co.jp/news/2026/11/23"},
-      "scene": "castle", "pin": [127.72, 26.22, 13, 6]
-    },
-    {
-      "id": 8, "region": "Oceania", "place": "VANUATU REGION",
-      "copy": {"headline": "Deep M6.5 Pacific quake", "summary": "The quake struck at 02:40 UTC, about 598 km deep."},
-      "attribution": {"certainty": "MEASURED", "outlet": "USGS", "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000ucvm/executive"},
-      "scene": "quake", "pin": [172.2672, -13.5846, 0, 0]
-    },
-    {
-      "id": 9, "region": "Europe", "place": "BELGIUM",
-      "copy": {"headline": "Strike grounds flights", "summary": "A nationwide strike disrupts Brussels and Charleroi airports and city transit."},
-      "attribution": {"certainty": "CONFIRMED", "outlet": "Brussels Times", "url": "https://www.brusselstimes.com/belgium/2416819/national-strike-no-flights-at-belgian-airports-only-two-metro-lines-running-in-brussels-tbtb/"},
-      "scene": "runway", "pin": [4.35, 50.85, -10, -6]
-    },
-    {
-      "id": 10, "region": "Africa", "place": "SOUTH AFRICA",
-      "copy": {"headline": "Durban clears medicine cargo", "summary": "The operator cleared 18 urgently needed containers and expects more shipments."},
-      "attribution": {"certainty": "STATEMENT", "outlet": "SAnews", "url": "https://www.sanews.gov.za/node/85835"},
-      "scene": "cargo", "pin": [31.02, -29.88, 0, 0],
-      "date_note": "The port operator disclosed the release in a Monday statement."
-    },
-    {
-      "id": 11, "region": "Middle East", "place": "YEMEN",
-      "copy": {"headline": "Deadly strike in Hodeida", "summary": "Houthi-run ministry reports six dead and 18 wounded in western Yemen."},
-      "attribution": {"certainty": "LOCAL CLAIM", "outlet": "AP", "url": "https://apnews.com/article/c2cb6de3515f887a5786c1147e918489"},
-      "scene": "port", "pin": [42.95, 14.8, 16, 10],
-      "date_note": "Monday casualty account; the toll is attributed and can change."
-    },
-    {
-      "id": 12, "region": "Asia", "place": "SOUTH KOREA",
-      "copy": {"headline": "Seoul names new ministers", "summary": "Cabinet reshuffle includes nominees for the foreign and unification ministries."},
-      "attribution": {"certainty": "ANNOUNCED", "outlet": "Yonhap", "url": "https://en.yna.co.kr/view/AEN20261123006751315"},
-      "scene": "cabinet"
-    },
-    {
-      "id": 13, "region": "Asia", "place": "THAILAND / MYANMAR",
-      "copy": {"headline": "Thailand traces river arsenic", "summary": "Bangkok will present evidence linking border-river contamination to mines upstream."},
-      "attribution": {"certainty": "ANNOUNCED", "outlet": "The Nation", "url": "https://www.nationthailand.com/news/general/40073812"},
-      "scene": "river", "pin": [99.9, 19.9, -8, 8]
-    },
-    {
-      "id": 14, "region": "N. America", "place": "UNITED STATES",
-      "copy": {"headline": "ICE expands plate-reader use", "summary": "New reporting describes broader vehicle surveillance in immigration enforcement."},
-      "attribution": {"certainty": "INVESTIGATION", "outlet": "The Atlantic", "url": "https://www.theatlantic.com/politics/2026/11/license-plate-readers-ice/689515/"},
-      "scene": "cameras", "pin": [-77, 38.9, 4, 5],
-      "date_note": "Original reporting appeared on 23 Nov at 11:00 UTC; the investigation covers earlier activity."
-    },
-    {
-      "id": 15, "region": "Latin America", "place": "CHILE",
-      "copy": {"headline": "Chile's peso under pressure", "summary": "The Monday report puts a dollar above 1,000 Chilean pesos."},
-      "attribution": {"certainty": "PUBLISHED", "outlet": "Emol", "url": "https://www.emol.com/noticias/Economia/2026/11/23/1217732/dolar-sobre-1000-proyecciones.html"},
-      "scene": "peso", "pin": [-70.65, -33.45, 0, 0]
-    },
-    {
-      "id": 16, "region": "Europe", "place": "EUROZONE",
-      "copy": {"headline": "Eurozone composite PMI stays at 51.7", "summary": "The flash survey points to modest private-sector growth."},
-      "attribution": {"certainty": "RELEASE", "outlet": "S&P Global", "url": "https://uk.investing.com/news/stock-market-news/eurozone-growth-holds-steady-in-november-despite-french-downturn-93CH-4998645"}
-    },
-    {
-      "id": 17, "region": "Europe", "place": "SWITZERLAND / CHINA",
-      "copy": {"headline": "China asks Switzerland to help ease EU trade rift", "summary": "Beijing raised trade and Taiwan in talks with the Swiss foreign minister."},
-      "attribution": {"certainty": "STATEMENT", "outlet": "Reuters", "url": "https://new.streetinsider.com/Reuters/China%2Bcalls%2Bon%2BSwitzerland%2Bto%2Bhelp%2Bresolve%2BEU%2Btrade%2Brift%2C%2Boppose%2BTaiwan%2Bindependence/27383534.html"}
-    },
-    {
-      "id": 18, "region": "Europe", "place": "BRITAIN",
-      "copy": {"headline": "UK publishes France removals inspection", "summary": "Inspectors say escorts were generally well organised."},
-      "attribution": {"certainty": "REPORT", "outlet": "HM Inspectorate", "url": "https://hmiprisons.justiceinspectorates.gov.uk/news/report-published-23-november/"}
-    },
-    {
-      "id": 19, "region": "Europe", "place": "SWITZERLAND",
-      "copy": {"headline": "UN opens business and rights forum", "summary": "The Geneva gathering runs for three days."},
-      "attribution": {"certainty": "OPENED", "outlet": "UN", "url": "https://webtv.un.org/en/asset/k1z/k1zlipyx2g"}
-    },
-    {
-      "id": 20, "region": "Europe", "place": "FRANCE",
-      "copy": {"headline": "Strasbourg plenary due to open", "summary": "The European Parliament lists a 17:00 local start."},
-      "attribution": {"certainty": "SCHEDULED", "outlet": "EU Parliament", "url": "https://the-president.europarl.europa.eu/en/agenda?week=2026-48"}
-    },
-    {
-      "id": 21, "region": "N. America", "place": "UNITED STATES / ARCTIC",
-      "copy": {"headline": "NASA profiles Arctic satellite laser ranging", "summary": "The new Earth Observatory feature looks at how scientists track satellites from the Arctic."},
-      "attribution": {"certainty": "PUBLISHED", "outlet": "NASA", "url": "https://science.nasa.gov/earth/earth-observatory/laser-focus-at-the-top-of-the-world/"}
-    },
-    {
-      "id": 22, "region": "Africa", "place": "SOUTH AFRICA",
-      "copy": {"headline": "Severe storms forecast in eastern South Africa", "summary": "Forecasters warned of intense rain."},
-      "attribution": {"certainty": "WARNING", "outlet": "SAnews", "url": "https://www.sanews.gov.za/south-africa/saws-warns-severe-thunderstorms-over-eastern-parts-sa"}
-    },
-    {
-      "id": 23, "region": "Africa", "place": "ATLANTIC",
-      "copy": {"headline": "Investigation traces Atlantic migrant deaths", "summary": "A Brazilian inquiry worked to identify bodies from a boat bound for Europe."},
-      "attribution": {"certainty": "INVESTIGATION", "outlet": "AP", "url": "https://apnews.com/article/43a102f8c87f8489348398a3f8dd494e"}
-    },
-    {
-      "id": 24, "region": "Oceania", "place": "AUSTRALIA",
-      "copy": {"headline": "Australia moves to freeze A$25 prescription cap", "summary": "Legislation would extend the cap through 2030."},
-      "attribution": {"certainty": "PROPOSAL", "outlet": "Australian PM", "url": "https://www.pm.gov.au/media/cheaper-medicines-stay-cheaper-pbs-co-payment-freeze"}
-    },
-    {
-      "id": 25, "region": "Oceania", "place": "AUSTRALIA / SINGAPORE",
-      "copy": {"headline": "Singapore PM begins visit to Australia", "summary": "The annual leaders' meeting is on the itinerary."},
-      "attribution": {"certainty": "VISIT", "outlet": "Singapore PMO", "url": "https://www.pmo.gov.sg/newsroom/pm-lawrence-wong-to-visit-australia-nov-2026/"}
-    },
-    {
-      "id": 26, "region": "Asia", "place": "VIETNAM",
-      "copy": {"headline": "Hai Phong starts two $1bn projects", "summary": "Work includes four new berths and a materials plant."},
-      "attribution": {"certainty": "STARTED", "outlet": "VNA", "url": "https://en.vietnamplus.vn/afternoon-briefing-on-november-23-post355963.vnp"}
-    },
-    {
-      "id": 27, "region": "Asia", "place": "VIETNAM",
-      "copy": {"headline": "Ho Chi Minh City presents 2050 plan", "summary": "Long-range plan sets out a digital and industrial hub."},
-      "attribution": {"certainty": "ANNOUNCED", "outlet": "VNA", "url": "https://en.vietnamplus.vn/afternoon-briefing-on-november-23-post355963.vnp"}
-    },
-    {
-      "id": 28, "region": "Asia", "place": "PAKISTAN",
-      "copy": {"headline": "Islamabad sets nuclear-security forum", "summary": "IAEA network meeting is set for 23–26 November."},
-      "attribution": {"certainty": "SCHEDULED", "outlet": "Dawn", "url": "https://www.dawn.com/news/2046329"}
-    },
-    {
-      "id": 29, "region": "Asia", "place": "INDONESIA",
-      "copy": {"headline": "Indonesia moves vice-presidential vote to Dec. 11", "summary": "The assembly announced the date change on Monday."},
-      "attribution": {"certainty": "ANNOUNCED", "outlet": "ANTARA", "url": "https://en.antaranews.com/news/444659/parliament-reschedules-vice-presidential-election-to-december-11"}
-    },
-    {
-      "id": 30, "region": "Asia", "place": "VIETNAM",
-      "copy": {"headline": "Vietnam Red Cross marks 80 years", "summary": "The anniversary ceremony takes place on Monday."},
-      "attribution": {"certainty": "EVENT", "outlet": "VNA", "url": "https://en.vietnamplus.vn/afternoon-briefing-on-november-23-post355963.vnp"}
-    },
-    {
-      "id": 31, "region": "N. America", "place": "CANADA",
-      "copy": {"headline": "Canada sets digital core-scanning announcement", "summary": "Natural Resources Canada scheduled the Monday event."},
-      "attribution": {"certainty": "SCHEDULED", "outlet": "NRCan", "url": "https://www.canada.ca/en/natural-resources-canada/news/2026/11/parliamentary-secretary-guay-to-make-a-digital-core-scanning-announcement.html"}
-    },
-    {
-      "id": 32, "region": "Latin America", "place": "BRAZIL",
-      "copy": {"headline": "Overnight storm floods Rio streets", "summary": "Local radio reported street flooding early Monday, with more rain forecast."},
-      "attribution": {"certainty": "REPORTED", "outlet": "Radio Manchete", "url": "https://mancheterio.com.br/rio-tem-chuva-forte-com-alagamentos-na-madrugada-e-previsao-de-novas-pancadas-a-tarde/"}
-    },
-    {
-      "id": 33, "region": "Latin America", "place": "MEXICO",
-      "copy": {"headline": "Mexico due to publish third-quarter GDP", "summary": "EFE listed the release for Monday. Result pending at cutoff."},
-      "attribution": {"certainty": "SCHEDULED", "outlet": "EFE", "url": "https://infobae-infobae-prod.web.arc-cdn.net/america/agencias/2026/11/23/lunes-23-de-noviembre-de-2026-0200-gmt/"}
-    },
-    {
-      "id": 34, "region": "Latin America", "place": "ARGENTINA",
-      "copy": {"headline": "Argentina marks sovereignty holiday", "summary": "The National Sovereignty Day observance falls on Monday."},
-      "attribution": {"certainty": "CALENDAR", "outlet": "Argentina govt.", "url": "https://www.argentina.gob.ar/feriados"}
-    },
-    {
-      "id": 35, "region": "N. America", "place": "UNITED STATES",
-      "copy": {"headline": "U.S. stock futures climb before opening", "summary": "Futures rebound after Friday's technology sell-off."},
-      "attribution": {"certainty": "MARKET", "outlet": "AP", "url": "https://apnews.com/article/49ba1beba78fa4ed2bd5898029f79c91"}
-    },
-    {
-      "id": 36, "region": "Asia", "place": "JAPAN",
-      "copy": {"headline": "Tokyo cash equities shut for holiday", "summary": "Monday trading pauses for Labor Thanksgiving Day."},
-      "attribution": {"certainty": "CALENDAR", "outlet": "Saxo", "url": "https://www.mindset.saxo/en-mena/content/articles/macro/market-quick-take---sentiment-bounces-after-friday-mayhem---23-november-2026-23112026"}
-    },
-    {
-      "id": 37, "region": "Europe", "place": "FRANCE",
-      "copy": {"headline": "France revisits constitutional debt rules", "summary": "The president floated reviving a 2011 fiscal proposal."},
-      "attribution": {"certainty": "REPORTED", "outlet": "Reuters", "url": "https://uk.marketscreener.com/news/macron-proposes-reviving-plan-to-enshrine-fiscal-rules-in-french-constitution-ce7851dad98ff522"}
-    }
-  ],
+    "side": [
+      {
+        "id": 2, "place": "IRAN", "region": "Middle East",
+        "scene": "tanker", "pin": [51.4, 35.7, 6, 6],
+        "copy": {
+          "headline": "Iran vows to resist U.S. oil blockade",
+          "summary": "Tehran says it will use all available means to counter the naval blockade."
+        },
+        "attribution": {
+          "outlet": "Reuters", "certainty": "STATEMENT",
+          "url": "https://www.aol.com/articles/iran-says-available-tools-confront-075904000.html"
+        },
+        "date_note": "Foreign ministry briefing on Monday. Reuters first dispatch at 07:59 UTC."
+      },
+      {
+        "id": 3, "place": "SOUTH KOREA / TAIWAN", "region": "Asia",
+        "scene": "chips", "pin": [127, 37.6, -5, -9],
+        "copy": {
+          "headline": "Asia's chip trade splits",
+          "summary": "KOSPI falls 3.3% while Taiwan's Taiex gains 2.2% amid AI-stock turmoil."
+        },
+        "attribution": {
+          "outlet": "AP", "certainty": "MARKET",
+          "url": "https://apnews.com/article/49ba1beba78fa4ed2bd5898029f79c91"
+        },
+        "date_note": "23 Nov market moves in AP's evolving Monday dispatch."
+      }
+    ],
+    "dispatches": [
+      {
+        "id": 4, "place": "GAZA", "region": "Middle East",
+        "scene": "rubble", "pin": [34.46, 31.5, 2, 19],
+        "copy": {"headline": "Gaza contamination mapped", "summary": "Oxfam found contamination indicators across over 99% of Gaza."},
+        "attribution": {"outlet": "Oxfam", "certainty": "REPORT",
+          "url": "https://www.oxfam.org/en/press-releases/more-than-99-per-cent-gaza-environmental-contamination-from-israel-military-assault"}
+      },
+      {
+        "id": 5, "place": "PACIFIC", "region": "Oceania",
+        "scene": "summit", "pin": [149.13, -35.28, -8, -10],
+        "copy": {"headline": "Pacific reacts to COP failure", "summary": "Pacific voices and Australian critics respond after Sunday's talks ended without a broad deal."},
+        "attribution": {"outlet": "Reuters", "certainty": "RESPONSE",
+          "url": "https://www.investing.com/news/economy-news/cop-flop-triggers-backlash-in-australia-pacific-nations-express-despair-5044423"},
+        "date_note": "COP31 closed 22 Nov; Monday's Australian and Pacific reaction is the item."
+      },
+      {
+        "id": 6, "place": "RUSSIA", "region": "Europe",
+        "scene": "refinery", "pin": [56.25, 58.01, 7, -8],
+        "copy": {"headline": "Perm refinery hit", "summary": "Officials reported a refinery fire and one death in the Perm region."},
+        "attribution": {"outlet": "Moscow Times", "certainty": "REPORTED",
+          "url": "https://www.themoscowtimes.com/2026/11/23/ukrainian-drones-kill-1-strike-oil-refinery-in-perm-region-a94347/pdf"}
+      },
+      {
+        "id": 7, "place": "JAPAN", "region": "Asia",
+        "scene": "castle", "pin": [127.72, 26.22, 13, 6],
+        "copy": {"headline": "Shuri Castle reopens", "summary": "Okinawa's restored main hall opens to visitors seven years after the fire."},
+        "attribution": {"outlet": "QAB", "certainty": "CONFIRMED",
+          "url": "https://www.qab.co.jp/news/2026/11/23"}
+      },
+      {
+        "id": 8, "place": "VANUATU REGION", "region": "Oceania",
+        "scene": "quake", "pin": [172.2672, -13.5846, 0, 0],
+        "copy": {"headline": "Deep M6.5 Pacific quake", "summary": "The quake struck at 02:40 UTC, about 598 km deep."},
+        "attribution": {"outlet": "USGS", "certainty": "MEASURED",
+          "url": "https://earthquake.usgs.gov/earthquakes/eventpage/us6000ucvm/executive"}
+      },
+      {
+        "id": 9, "place": "BELGIUM", "region": "Europe",
+        "scene": "runway", "pin": [4.35, 50.85, -10, -6],
+        "copy": {"headline": "Strike grounds flights", "summary": "A nationwide strike disrupts Brussels and Charleroi airports and city transit."},
+        "attribution": {"outlet": "Brussels Times", "certainty": "CONFIRMED",
+          "url": "https://www.brusselstimes.com/belgium/2416819/national-strike-no-flights-at-belgian-airports-only-two-metro-lines-running-in-brussels-tbtb/"}
+      },
+      {
+        "id": 10, "place": "SOUTH AFRICA", "region": "Africa",
+        "scene": "cargo", "pin": [31.02, -29.88, 0, 0],
+        "copy": {"headline": "Durban clears medicine cargo", "summary": "The operator cleared 18 urgently needed containers and expects more shipments."},
+        "attribution": {"outlet": "SAnews", "certainty": "STATEMENT",
+          "url": "https://www.sanews.gov.za/node/85835"},
+        "date_note": "The port operator disclosed the release in a Monday statement."
+      },
+      {
+        "id": 11, "place": "YEMEN", "region": "Middle East",
+        "scene": "port", "pin": [42.95, 14.8, 16, 10],
+        "copy": {"headline": "Deadly strike in Hodeida", "summary": "Houthi-run ministry reports six dead and 18 wounded in western Yemen."},
+        "attribution": {"outlet": "AP", "certainty": "LOCAL CLAIM",
+          "url": "https://apnews.com/article/c2cb6de3515f887a5786c1147e918489"},
+        "date_note": "Monday casualty account; the toll is attributed and can change."
+      },
+      {
+        "id": 12, "place": "SOUTH KOREA", "region": "Asia", "scene": "cabinet",
+        "copy": {"headline": "Seoul names new ministers", "summary": "Cabinet reshuffle includes nominees for the foreign and unification ministries."},
+        "attribution": {"outlet": "Yonhap", "certainty": "ANNOUNCED",
+          "url": "https://en.yna.co.kr/view/AEN20261123006751315"}
+      },
+      {
+        "id": 13, "place": "THAILAND / MYANMAR", "region": "Asia",
+        "scene": "river", "pin": [99.9, 19.9, -8, 8],
+        "copy": {"headline": "Thailand traces river arsenic", "summary": "Bangkok will present evidence linking border-river contamination to mines upstream."},
+        "attribution": {"outlet": "The Nation", "certainty": "ANNOUNCED",
+          "url": "https://www.nationthailand.com/news/general/40073812"}
+      },
+      {
+        "id": 14, "place": "UNITED STATES", "region": "N. America",
+        "scene": "cameras", "pin": [-77, 38.9, 4, 5],
+        "copy": {"headline": "ICE expands plate-reader use", "summary": "New reporting describes broader vehicle surveillance in immigration enforcement."},
+        "attribution": {"outlet": "The Atlantic", "certainty": "INVESTIGATION",
+          "url": "https://www.theatlantic.com/politics/2026/11/license-plate-readers-ice/689515/"},
+        "date_note": "Original reporting appeared on 23 Nov at 11:00 UTC; the investigation covers earlier activity."
+      },
+      {
+        "id": 15, "place": "CHILE", "region": "Latin America",
+        "scene": "peso", "pin": [-70.65, -33.45, 0, 0],
+        "copy": {"headline": "Chile's peso under pressure", "summary": "The Monday report puts a dollar above 1,000 Chilean pesos."},
+        "attribution": {"outlet": "Emol", "certainty": "PUBLISHED",
+          "url": "https://www.emol.com/noticias/Economia/2026/11/23/1217732/dolar-sobre-1000-proyecciones.html"}
+      }
+    ],
+    "briefs": [
+      {
+        "id": 16, "place": "EUROZONE", "region": "Europe",
+        "copy": {"headline": "Eurozone composite PMI stays at 51.7", "summary": "The flash survey points to modest private-sector growth."},
+        "attribution": {"outlet": "S&P Global", "certainty": "RELEASE",
+          "url": "https://uk.investing.com/news/stock-market-news/eurozone-growth-holds-steady-in-november-despite-french-downturn-93CH-4998645"}
+      },
+      {
+        "id": 17, "place": "SWITZERLAND / CHINA", "region": "Europe",
+        "copy": {"headline": "China asks Switzerland to help ease EU trade rift", "summary": "Beijing raised trade and Taiwan in talks with the Swiss foreign minister."},
+        "attribution": {"outlet": "Reuters", "certainty": "STATEMENT",
+          "url": "https://new.streetinsider.com/Reuters/China%2Bcalls%2Bon%2BSwitzerland%2Bto%2Bhelp%2Bresolve%2BEU%2Btrade%2Brift%2C%2Boppose%2BTaiwan%2Bindependence/27383534.html"}
+      },
+      {
+        "id": 18, "place": "BRITAIN", "region": "Europe",
+        "copy": {"headline": "UK publishes France removals inspection", "summary": "Inspectors say escorts were generally well organised."},
+        "attribution": {"outlet": "HM Inspectorate", "certainty": "REPORT",
+          "url": "https://hmiprisons.justiceinspectorates.gov.uk/news/report-published-23-november/"}
+      },
+      {
+        "id": 19, "place": "SWITZERLAND", "region": "Europe",
+        "copy": {"headline": "UN opens business and rights forum", "summary": "The Geneva gathering runs for three days."},
+        "attribution": {"outlet": "UN", "certainty": "OPENED",
+          "url": "https://webtv.un.org/en/asset/k1z/k1zlipyx2g"}
+      },
+      {
+        "id": 20, "place": "FRANCE", "region": "Europe",
+        "copy": {"headline": "Strasbourg plenary due to open", "summary": "The European Parliament lists a 17:00 local start."},
+        "attribution": {"outlet": "EU Parliament", "certainty": "SCHEDULED",
+          "url": "https://the-president.europarl.europa.eu/en/agenda?week=2026-48"}
+      },
+      {
+        "id": 21, "place": "UNITED STATES / ARCTIC", "region": "N. America",
+        "copy": {"headline": "NASA profiles Arctic satellite laser ranging", "summary": "The new Earth Observatory feature looks at how scientists track satellites from the Arctic."},
+        "attribution": {"outlet": "NASA", "certainty": "PUBLISHED",
+          "url": "https://science.nasa.gov/earth/earth-observatory/laser-focus-at-the-top-of-the-world/"}
+      },
+      {
+        "id": 22, "place": "SOUTH AFRICA", "region": "Africa",
+        "copy": {"headline": "Severe storms forecast in eastern South Africa", "summary": "Forecasters warned of intense rain."},
+        "attribution": {"outlet": "SAnews", "certainty": "WARNING",
+          "url": "https://www.sanews.gov.za/south-africa/saws-warns-severe-thunderstorms-over-eastern-parts-sa"}
+      },
+      {
+        "id": 23, "place": "ATLANTIC", "region": "Africa",
+        "copy": {"headline": "Investigation traces Atlantic migrant deaths", "summary": "A Brazilian inquiry worked to identify bodies from a boat bound for Europe."},
+        "attribution": {"outlet": "AP", "certainty": "INVESTIGATION",
+          "url": "https://apnews.com/article/43a102f8c87f8489348398a3f8dd494e"}
+      },
+      {
+        "id": 24, "place": "AUSTRALIA", "region": "Oceania",
+        "copy": {"headline": "Australia moves to freeze A$25 prescription cap", "summary": "Legislation would extend the cap through 2030."},
+        "attribution": {"outlet": "Australian PM", "certainty": "PROPOSAL",
+          "url": "https://www.pm.gov.au/media/cheaper-medicines-stay-cheaper-pbs-co-payment-freeze"}
+      },
+      {
+        "id": 25, "place": "AUSTRALIA / SINGAPORE", "region": "Oceania",
+        "copy": {"headline": "Singapore PM begins visit to Australia", "summary": "The annual leaders' meeting is on the itinerary."},
+        "attribution": {"outlet": "Singapore PMO", "certainty": "VISIT",
+          "url": "https://www.pmo.gov.sg/newsroom/pm-lawrence-wong-to-visit-australia-nov-2026/"}
+      },
+      {
+        "id": 26, "place": "VIETNAM", "region": "Asia",
+        "copy": {"headline": "Hai Phong starts two $1bn projects", "summary": "Work includes four new berths and a materials plant."},
+        "attribution": {"outlet": "VNA", "certainty": "STARTED",
+          "url": "https://en.vietnamplus.vn/afternoon-briefing-on-november-23-post355963.vnp"}
+      },
+      {
+        "id": 27, "place": "VIETNAM", "region": "Asia",
+        "copy": {"headline": "Ho Chi Minh City presents 2050 plan", "summary": "Long-range plan sets out a digital and industrial hub."},
+        "attribution": {"outlet": "VNA", "certainty": "ANNOUNCED",
+          "url": "https://en.vietnamplus.vn/afternoon-briefing-on-november-23-post355963.vnp"}
+      },
+      {
+        "id": 28, "place": "PAKISTAN", "region": "Asia",
+        "copy": {"headline": "Islamabad sets nuclear-security forum", "summary": "IAEA network meeting is set for 23–26 November."},
+        "attribution": {"outlet": "Dawn", "certainty": "SCHEDULED",
+          "url": "https://www.dawn.com/news/2046329"}
+      },
+      {
+        "id": 29, "place": "INDONESIA", "region": "Asia",
+        "copy": {"headline": "Indonesia moves vice-presidential vote to Dec. 11", "summary": "The assembly announced the date change on Monday."},
+        "attribution": {"outlet": "ANTARA", "certainty": "ANNOUNCED",
+          "url": "https://en.antaranews.com/news/444659/parliament-reschedules-vice-presidential-election-to-december-11"}
+      },
+      {
+        "id": 30, "place": "VIETNAM", "region": "Asia",
+        "copy": {"headline": "Vietnam Red Cross marks 80 years", "summary": "The anniversary ceremony takes place on Monday."},
+        "attribution": {"outlet": "VNA", "certainty": "EVENT",
+          "url": "https://en.vietnamplus.vn/afternoon-briefing-on-november-23-post355963.vnp"}
+      },
+      {
+        "id": 31, "place": "CANADA", "region": "N. America",
+        "copy": {"headline": "Canada sets digital core-scanning announcement", "summary": "Natural Resources Canada scheduled the Monday event."},
+        "attribution": {"outlet": "NRCan", "certainty": "SCHEDULED",
+          "url": "https://www.canada.ca/en/natural-resources-canada/news/2026/11/parliamentary-secretary-guay-to-make-a-digital-core-scanning-announcement.html"}
+      },
+      {
+        "id": 32, "place": "BRAZIL", "region": "Latin America",
+        "copy": {"headline": "Overnight storm floods Rio streets", "summary": "Local radio reported street flooding early Monday, with more rain forecast."},
+        "attribution": {"outlet": "Radio Manchete", "certainty": "REPORTED",
+          "url": "https://mancheterio.com.br/rio-tem-chuva-forte-com-alagamentos-na-madrugada-e-previsao-de-novas-pancadas-a-tarde/"}
+      },
+      {
+        "id": 33, "place": "MEXICO", "region": "Latin America",
+        "copy": {"headline": "Mexico due to publish third-quarter GDP", "summary": "EFE listed the release for Monday. Result pending at cutoff."},
+        "attribution": {"outlet": "EFE", "certainty": "SCHEDULED",
+          "url": "https://infobae-infobae-prod.web.arc-cdn.net/america/agencias/2026/11/23/lunes-23-de-noviembre-de-2026-0200-gmt/"}
+      },
+      {
+        "id": 34, "place": "ARGENTINA", "region": "Latin America",
+        "copy": {"headline": "Argentina marks sovereignty holiday", "summary": "The National Sovereignty Day observance falls on Monday."},
+        "attribution": {"outlet": "Argentina govt.", "certainty": "CALENDAR",
+          "url": "https://www.argentina.gob.ar/feriados"}
+      },
+      {
+        "id": 35, "place": "UNITED STATES", "region": "N. America",
+        "copy": {"headline": "U.S. stock futures climb before opening", "summary": "Futures rebound after Friday's technology sell-off."},
+        "attribution": {"outlet": "AP", "certainty": "MARKET",
+          "url": "https://apnews.com/article/49ba1beba78fa4ed2bd5898029f79c91"}
+      },
+      {
+        "id": 36, "place": "JAPAN", "region": "Asia",
+        "copy": {"headline": "Tokyo cash equities shut for holiday", "summary": "Monday trading pauses for Labor Thanksgiving Day."},
+        "attribution": {"outlet": "Saxo", "certainty": "CALENDAR",
+          "url": "https://www.mindset.saxo/en-mena/content/articles/macro/market-quick-take---sentiment-bounces-after-friday-mayhem---23-november-2026-23112026"}
+      },
+      {
+        "id": 37, "place": "FRANCE", "region": "Europe",
+        "copy": {"headline": "France revisits constitutional debt rules", "summary": "The president floated reviving a 2011 fiscal proposal."},
+        "attribution": {"outlet": "Reuters", "certainty": "REPORTED",
+          "url": "https://uk.marketscreener.com/news/macron-proposes-reviving-plan-to-enshrine-fiscal-rules-in-french-constitution-ce7851dad98ff522"}
+      }
+    ]
+  },
   "timeline": [
-    {"time_utc": "02:40", "label": "QUAKE 08", "kind": "event"},
-    {"time_utc": "03:00", "label": "SHURI 07", "kind": "event"},
-    {"time_utc": "06:18", "label": "COP REACTION 05", "kind": "report"},
-    {"time_utc": "07:48", "label": "LIBYA 01", "kind": "report"},
-    {"time_utc": "07:59", "label": "IRAN 02", "kind": "report"},
-    {"time_utc": "09:00", "label": "PMI 16", "kind": "release"}
+    {"label": "QUAKE 08", "time_utc": "02:40", "kind": "event"},
+    {"label": "SHURI 07", "time_utc": "03:00", "kind": "event"},
+    {"label": "COP REACTION 05", "time_utc": "06:18", "kind": "report"},
+    {"label": "LIBYA 01", "time_utc": "07:48", "kind": "report"},
+    {"label": "IRAN 02", "time_utc": "07:59", "kind": "report"},
+    {"label": "PMI 16", "time_utc": "09:00", "kind": "release"}
   ],
   "date_check": [
     {"subject": "Benghazi", "note": "Strike 22 Nov; Kyiv confirms role on 23 Nov."},
@@ -230,10 +287,12 @@
     {"subject": "Prior day", "note": "U.S. House tally and WHO Congo appeal: 22 Nov."},
     {"subject": "Excluded", "note": "Kyiv-area attack and Amazon rescue: 22 Nov."}
   ],
+  "market_source": "AP | 23 NOV | SESSION SNAPSHOTS",
+  "market_link": "https://apnews.com/article/49ba1beba78fa4ed2bd5898029f79c91",
   "markets": [
-    {"index": "KOSPI", "value": "4,708.54", "session": "-3.3% · Seoul close"},
-    {"index": "TAIEX", "value": "+2.2%", "session": "Taipei close"},
-    {"index": "BRENT", "value": "$92.02", "session": "-0.6% · intraday"},
-    {"index": "FTSE 100", "value": "10,394.52", "session": "+0.5% · early trade"}
+    {"index": "KOSPI", "session": "-3.3% · Seoul close", "value": "4,708.54"},
+    {"index": "TAIEX", "session": "Taipei close", "value": "+2.2%"},
+    {"index": "BRENT", "session": "-0.6% · intraday", "value": "$92.02"},
+    {"index": "FTSE 100", "session": "+0.5% · early trade", "value": "10,394.52"}
   ]
 }
